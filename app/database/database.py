@@ -16,4 +16,4 @@ LocalSession = sessionmaker(engine)
 #create tables and avoid circular import
 def init_db():
     from app.models import models
-    DeclarativeBase.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
