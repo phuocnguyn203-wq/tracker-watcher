@@ -32,6 +32,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     
     username: Mapped[str] = mapped_column(String(50))
+    email: Mapped[str]
     hashed_password: Mapped[str]
     
     watchers: Mapped[list[Watcher]] = relationship(back_populates='user')
