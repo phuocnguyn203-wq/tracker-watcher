@@ -9,6 +9,11 @@ class Base(DeclarativeBase):
     pass
 
 engine = create_engine(config.settings.database_url)
-DeclarativeBase.metadata.create_all(engine)
+
 
 LocalSession = sessionmaker(engine)
+
+#create tables and avoid circular import
+def init_db():
+    from app.models import models
+    DeclarativeBase.metadata.create_all(engine)
