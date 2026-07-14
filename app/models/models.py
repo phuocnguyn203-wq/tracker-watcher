@@ -14,7 +14,7 @@ class Watcher(Base):
     name: Mapped[str] = mapped_column(String(100))
     
     source_type: Mapped[str] = mapped_column(String(50))
-    product_id: Mapped[str]
+    product_id: Mapped[int]
     
     cc: Mapped[str] = mapped_column(String(10), default='vn')
     target_price: Mapped[str]
