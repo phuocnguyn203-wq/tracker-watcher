@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, status
 
 #-----------------------------------------------
 #database dependency import
+from sqlalchemy.orm import Session
 from app.database.database import LocalSession 
 #-----------------------------------------------
 
@@ -12,7 +13,7 @@ from app.database.database import LocalSession
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 
-from app.schemas.users import TokenData, Token
+from app.schemas.users import TokenData
 from app.config import settings
 
 import jwt
@@ -26,14 +27,16 @@ def get_db():
         yield db
     except Exception:
         db.rollback()
+        raise
     finally:
         db.close()
 
-get_db_deps = Depends(get_db)
+get_db_dep = Depends(get_db)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/users/token')
 
 async def get_current_user(
+    db: Annotated[Session, get_db_dep],
     token: Annotated[str, Depends(oauth2_scheme)] 
 ):
     credential_exception = HTTPException(
@@ -54,7 +57,10 @@ async def get_current_user(
     except InvalidTokenError:
         raise credential_exception
     
-    user = get_user(token_data.username) #type: ignore
+    user = get_user(
+        db,
+        token_data.username, #type: ignore[reportArgumentType]
+    )
     if user is None:
         raise credential_exception
     return user

@@ -3,8 +3,9 @@ from datetime import datetime, timezone, timedelta
 import jwt
 from pwdlib import PasswordHash
 
+from fastapi import HTTPException, status
 from sqlalchemy import select
-
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.models import User
@@ -63,4 +64,22 @@ def create_access_token(
     encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
             
     return encoded_jwt
+
+def create_user(
+    db: Session,
+    username: str,
+    password: str,
+    email: str,
+):
+    new_user = User(
+        username=username,
+        hashed_password=get_hashed_password(password),
+        email=email,
+    )
+    try:
+        db.add(new_user)
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise e
     

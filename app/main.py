@@ -3,6 +3,8 @@ from fastapi import FastAPI
 
 from app.database.database import init_db
 
+from app.routers import users
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
@@ -10,4 +12,5 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+app.include_router(users.router)
 

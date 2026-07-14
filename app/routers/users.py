@@ -1,13 +1,14 @@
 from typing import Annotated
 from app.config import settings
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Body, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from app.schemas.users import Token, User
+from sqlalchemy.exc import IntegrityError
+from app.schemas.users import Token, User, CreateUser
 
 from datetime import timedelta
-from app.dependencies import get_current_user_dep, get_current_user_dep
+from app.dependencies import get_db_dep, get_current_user_dep
 from app.services import users as users_service
 
 router = APIRouter(
@@ -17,7 +18,7 @@ router = APIRouter(
 
 @router.post('/token')
 async def login_for_access_token(
-    db: Annotated[Session, get_current_user_dep],
+    db: Annotated[Session, get_db_dep],
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
     user = users_service.authenticate_user(
@@ -43,9 +44,24 @@ async def login_for_access_token(
         token_type='bearer'
     )
 
+@router.post('/create_user')
+async def create_user(
+    db: Annotated[Session, get_db_dep],
+    create_user: Annotated[CreateUser, Body()],
+):
+    try:
+        users_service.create_user(
+            db,
+            **create_user.model_dump()
+        )
+    except IntegrityError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail='username or email already exists'
+        )
 
 @router.get('/me')
 async def read_user_me(
     user: Annotated[User, get_current_user_dep],
-):
+) -> User:
     return user
