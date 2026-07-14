@@ -17,7 +17,7 @@ class Watcher(Base):
     product_id: Mapped[int]
     
     cc: Mapped[str] = mapped_column(String(10), default='vn')
-    target_price: Mapped[str]
+    target_price: Mapped[int]
     
     interval_minutes: Mapped[int] = mapped_column(Integer, default=30)    
     last_state: Mapped[bool] = mapped_column(Boolean, default=False)
