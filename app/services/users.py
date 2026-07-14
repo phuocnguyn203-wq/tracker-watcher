@@ -30,7 +30,7 @@ def get_user(
     stmt = select(User).where(User.username==username)
     user = db.scalar(stmt)
     if user is not None:
-        return UserInDB(**user.__dict__)
+        return user
 
 def authenticate_user(
     db: Session,
