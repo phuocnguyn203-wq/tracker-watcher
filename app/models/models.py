@@ -12,17 +12,17 @@ class Watcher(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     
     name: Mapped[str] = mapped_column(String(100))
+    
     source_type: Mapped[str] = mapped_column(String(50))
     product_id: Mapped[str]
+    
     cc: Mapped[str] = mapped_column(String(10), default='vn')
-    
     target_price: Mapped[str]
-    interval_minutes: Mapped[int] = mapped_column(Integer, default=30)
-    notify_to: Mapped[str] = mapped_column(String(10))
     
+    interval_minutes: Mapped[int] = mapped_column(Integer, default=30)    
     last_state: Mapped[bool] = mapped_column(Boolean, default=False)
     last_price: Mapped[int] = mapped_column(Integer, nullable=True)
-    last_checked_at: Mapped[datetime]
+    last_checked_at: Mapped[datetime | None] = mapped_column(nullable=True)
     
     user: Mapped['User'] = relationship(back_populates='watchers')
 
