@@ -30,4 +30,19 @@ class ReturnedWatcher(BaseModel):
     last_state: bool = Field(default=False)
     last_price: int | None = None
     last_checked_at: datetime | None = None
+
+class UpdateWatcher(BaseModel):
+    name: str
+    
+    source_type: str
+    product_id: int
+
+    cc: str
+    target_price: int
+
+    interval_minutes: int
+    last_state: bool = Field(default=False)
+    last_price: int | None = None
+    last_checked_at: datetime | None = None
+    
     
