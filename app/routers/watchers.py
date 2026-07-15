@@ -1,6 +1,7 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
+from fastapi import Body, Path
 
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -47,3 +48,21 @@ def get_watchers_by_user_id(
         user_id=current_user.id
     )
     return all_watchers
+
+@router.get('/watchers/{watcher_id}', response_model=ReturnedWatcher)
+def get_specific_watcher_by_id(
+    db: Annotated[Session, get_db_dep],
+    current_user: Annotated[User, get_current_user_dep],
+    watcher_id: Annotated[int, Path()]
+):
+    watcher = watchers_service.get_specific_watcher(
+        db=db,
+        user_id=current_user.id,
+        watcher_id=watcher_id,
+    )
+    if watcher is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Could not find watcher {watcher_id}'
+        )
+    return watcher
