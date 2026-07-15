@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from app.models.models import User, Watcher
-from app.schemas.watchers import CreateWatcher, ReturnedWatcher
+from app.schemas.watchers import CreateWatcher, ReturnedWatcher, UpdateWatcher
 
 from app.dependencies import get_db_dep
 from app.dependencies import get_current_user_dep 
@@ -66,3 +66,26 @@ async def get_specific_watcher_by_id(
             detail=f'Could not find watcher {watcher_id}'
         )
     return watcher
+
+@router.put('/{watcher_id}', response_model=ReturnedWatcher)
+async def modify_watcher(
+    db: Annotated[Session, get_db_dep],
+    current_user: Annotated[User, get_current_user_dep],
+    watcher_id: Annotated[int, Path()],
+    update_watcher: Annotated[UpdateWatcher, Body()]
+):
+    updated_watcher = watchers_service.modify_watcher(
+        db=db,
+        user_id=current_user.id,
+        watcher_id=watcher_id,
+        update_watcher=update_watcher
+    )
+    
+    if updated_watcher is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Could not found watcher {watcher_id}'
+        )
+    
+    return updated_watcher
+    
