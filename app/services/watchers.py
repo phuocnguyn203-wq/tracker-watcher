@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -22,4 +23,12 @@ def create_watcher(
         raise e
     
     return watcher
+
+def get_all_watchers_for_users(
+    db: Session,
+    user_id: int,
+):
+    stmt = select(Watcher).where(Watcher.user_id==user_id)
+    all_watchers = db.scalars(stmt).all()
     
+    return all_watchers
