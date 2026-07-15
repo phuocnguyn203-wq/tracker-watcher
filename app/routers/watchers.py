@@ -49,7 +49,7 @@ async def get_watchers_by_user_id(
     )
     return all_watchers
 
-@router.get('/watchers/{watcher_id}', response_model=ReturnedWatcher)
+@router.get('/{watcher_id}', response_model=ReturnedWatcher)
 async def get_specific_watcher_by_id(
     db: Annotated[Session, get_db_dep],
     current_user: Annotated[User, get_current_user_dep],
