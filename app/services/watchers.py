@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from app.schemas.watchers import CreateWatcher
+from app.schemas.watchers import CreateWatcher, UpdateWatcher
 
 from app.models.models import Watcher
 
@@ -48,4 +48,25 @@ def get_specific_watcher(
     
     watcher = db.scalar(stmt)
     return watcher
+
+def modify_watcher(
+    db: Session,
+    user_id: int,
+    watcher_id: int,
+    update_watcher: UpdateWatcher
+):
+    stmt = (
+        select(Watcher)\
+            .where(Watcher.user_id==user_id)\
+                .where(Watcher.id==watcher_id)
+    )
+    watcher = db.scalar(stmt)
     
+    if watcher is not None:
+        update_watcher_in_dict = update_watcher.model_dump()
+        for k, v in update_watcher_in_dict.items():
+            setattr(watcher, k, v)
+        db.commit()
+
+    return watcher
+            
