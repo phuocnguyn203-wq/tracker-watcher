@@ -69,4 +69,21 @@ def modify_watcher(
         db.commit()
 
     return watcher
-            
+
+def delete_watcher(
+    db: Session,
+    user_id: int,
+    watcher_id: int
+):
+    stmt = (
+        select(Watcher)\
+            .where(Watcher.user_id==user_id)\
+                .where(Watcher.id==watcher_id)
+    )
+    watcher = db.scalar(stmt)
+
+    if watcher is not None:
+        db.delete(watcher)
+        db.commit()
+
+    return watcher
