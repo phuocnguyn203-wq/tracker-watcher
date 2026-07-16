@@ -5,7 +5,7 @@ def should_notify(
     watcher: Watcher,
     price_result: PriceResult
 ):
-    if watcher.target_price < price_result.price:
+    if watcher.target_price >= price_result.final:
         if not watcher.last_state:
             return True
     return False
