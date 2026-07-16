@@ -21,19 +21,22 @@ def check_watcher(
         watcher=watcher,
         price_result=price_result,
     )
+
+    watcher.last_checked_at = datetime.now(timezone.utc)
+
     if is_notify:
         last_price = watcher.last_price
-        
+
         watcher_name = watcher.name
-        
-        source_type = watcher.source_type 
+
+        source_type = watcher.source_type
         product_id = watcher.product_id
-        
+
         new_last_price = price_result.final
         discount_percent = price_result.discount_percent
         initial_formatted = price_result.initial_formatted
         final_formatted = price_result.final_formatted
-        
+
         message = (
             "[bold green]🔔 PRICE ALERT[/bold green]\n"
             f"Watcher      : [cyan]{watcher_name}[/cyan]\n"
@@ -44,14 +47,13 @@ def check_watcher(
             f"Original     : [dim]{initial_formatted}[/dim]\n"
             f"Discount     : [bold magenta]{discount_percent}%[/bold magenta]"
         )
-                
+
         notif_result = notify_dev_terminal(message)
-        
+
         watcher.last_state = True
         watcher.last_price = new_last_price
-        watcher.last_checked_at = datetime.now(timezone.utc)
         db.commit()
-        
+
         return AlertResult(
             watcher_id=watcher.id,
             price_result=price_result,
@@ -59,4 +61,7 @@ def check_watcher(
             notification=notif_result,
             error=None
         )
+
+    db.commit()
+    return None
 
