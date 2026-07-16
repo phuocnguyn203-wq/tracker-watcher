@@ -8,7 +8,10 @@ from app import config
 class Base(DeclarativeBase):
     pass
 
-engine = create_engine(config.settings.database_url)
+engine = create_engine(
+    config.settings.database_url,
+    connect_args={'check_same_thread': False}
+)
 
 
 LocalSession = sessionmaker(engine)
