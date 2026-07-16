@@ -12,5 +12,6 @@ dependencies = [
     "pyjwt>=2.13.0",
     "python-dotenv>=1.2.2",
     "requests>=2.34.2",
+    "rich>=15.0.0",
     "sqlalchemy>=2.0.51",
 ]
