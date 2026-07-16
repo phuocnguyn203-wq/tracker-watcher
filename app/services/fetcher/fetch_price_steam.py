@@ -25,7 +25,7 @@ def fetch_steam_price_by_id(
     if is_free:
         return PriceResult(
             success=is_success,
-            price=0,
+            final=0,
             currency=None,
             error=None,
             is_free=True
@@ -35,10 +35,15 @@ def fetch_steam_price_by_id(
     price_overview = data['price_overview']
     currency = price_overview['currency']
     final = price_overview['final'] / 100
+    initial_formatted = price_overview['initial_formatted']
+    final_formatted = price_overview['final_formatted']
     return PriceResult(
             success=is_success,
-            price=int(final),
+            final=int(final),
             currency=currency,
             error=None,
-            is_free=False
+            is_free=False,
+            
+            initial_formatted=initial_formatted,
+            final_formatted=final_formatted
         )
