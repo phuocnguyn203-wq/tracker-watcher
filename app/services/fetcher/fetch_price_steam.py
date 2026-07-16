@@ -35,6 +35,7 @@ def fetch_steam_price_by_id(
     price_overview = data['price_overview']
     currency = price_overview['currency']
     final = price_overview['final'] / 100
+    discount_percent = price_overview['discount_percent']
     initial_formatted = price_overview['initial_formatted']
     final_formatted = price_overview['final_formatted']
     return PriceResult(
@@ -42,6 +43,7 @@ def fetch_steam_price_by_id(
             final=int(final),
             currency=currency,
             error=None,
+            discount_percent=discount_percent,
             is_free=False,
             
             initial_formatted=initial_formatted,
